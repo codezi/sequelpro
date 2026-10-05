@@ -8,6 +8,12 @@ if [[ ! -d "$app/Contents/MacOS" ]]; then
     exit 1
 fi
 
+if [[ -e "$app/Contents/Frameworks/Sparkle.framework" ]] ||
+   /usr/bin/plutil -extract SUFeedURL raw "$app/Contents/Info.plist" >/dev/null 2>&1; then
+    echo "The retired upstream updater is still present in $app" >&2
+    exit 1
+fi
+
 count=0
 while IFS= read -r -d '' binary; do
     description=$(/usr/bin/file -b "$binary")

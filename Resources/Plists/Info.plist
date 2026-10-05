@@ -253,17 +253,6 @@
 	<string></string>
 	<key>SPVersionShortHash</key>
 	<string></string>
-	<!-- Local native builds should not automatically install upstream Intel releases. -->
-	<key>SUEnableAutomaticChecks</key>
-	<false/>
-	<key>SUAutomaticallyUpdate</key>
-	<false/>
-	<key>SUEnableSystemProfiling</key>
-	<true/>
-	<key>SUFeedURL</key>
-	<string>https://sequelpro.com/appcast/app-releases.xml</string>
-	<key>SUPublicDSAKeyFile</key>
-	<string>sparkle-public-key.pem</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

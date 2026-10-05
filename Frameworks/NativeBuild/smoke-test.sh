@@ -13,6 +13,6 @@ xcrun clang -arch arm64 -mmacosx-version-min=12.0 -fno-objc-arc \
     -Wl,-rpath,"$developer_dir/Platforms/MacOSX.platform/Developer/usr/lib" \
     -framework Foundation -framework AppKit -framework UniversalDetector \
     -framework ShortcutRecorder -framework FeedbackReporter -framework Growl \
-    -framework OCMock -framework Sparkle "$script_dir/smoke-test.m" \
+    -framework OCMock "$script_dir/smoke-test.m" \
     -o "$smoke_dir/framework-smoke"
 DYLD_FRAMEWORK_PATH="$frameworks_dir" "$smoke_dir/framework-smoke"

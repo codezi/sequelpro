@@ -137,6 +137,10 @@ log 'Updating build number (build-version.pl)...'
 copy_default_bundles
 copy_default_themes
 
+# Remove retired updater files left by an incremental build of an older checkout.
+rm -rf "${FRAMEWORKS_PATH}/Sparkle.framework"
+rm -f "${BUILD_PRODUCT}/Contents/Resources/sparkle-public-key.pem"
+
 # Distribution re-signs resources after trimming. Local Release builds keep
 # embedded frameworks intact after Xcode's CodeSignOnCopy phase.
 if [ "$CONFIGURATION" = 'Distribution' ]

@@ -32,10 +32,10 @@ Run the XCTest suite natively with `make native-test`. Use
 `make native NATIVE_CONFIG=Debug` for a debug build, or `make verify-native` to
 recheck the Release bundle. Build artifacts stay under `.build/`.
 
-Automatic upstream update checks and installation default to off for this
-custom build, since upstream releases may replace it with an Intel binary.
-Existing user preferences still take precedence. Use a fresh native build from
-this checkout when updating it.
+The app does not load the upstream Sparkle updater or contact its update feed.
+**View Fork Releases…** in the application menu and **Preferences → Updates**
+opens [this fork's GitHub Releases](https://github.com/codezi/sequelpro/releases)
+for manual updates. Existing Sparkle preferences cannot re-enable the old updater.
 
 Release builds do not regenerate translations or modify signed framework
 resources. The historical `Distribution` configuration still requires the

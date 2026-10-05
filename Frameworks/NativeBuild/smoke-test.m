@@ -4,7 +4,6 @@
 #import <FeedbackReporter/FRFeedbackReporter.h>
 #import <Growl/Growl.h>
 #import <OCMock/OCMock.h>
-#import <Sparkle/Sparkle.h>
 
 int main(void) {
     @autoreleasepool {
@@ -19,11 +18,11 @@ int main(void) {
         NSCAssert(combo.code == 0 && combo.flags == NSEventModifierFlagCommand, @"KeyCombo ABI failed");
         NSCAssert([SRRecorderControl class] != Nil && [SRRecorderCell class] != Nil, @"Missing legacy shortcut classes");
         NSCAssert([FRFeedbackReporter sharedReporter] != nil, @"Missing feedback reporter");
-        NSCAssert([GrowlApplicationBridge class] != Nil && [SUUpdater class] != Nil, @"Missing legacy notification/updater classes");
+        NSCAssert([GrowlApplicationBridge class] != Nil, @"Missing notification bridge class");
         id mock = [OCMockObject niceMockForClass:[NSString class]];
         [[[mock stub] andReturn:@"native"] lowercaseString];
         NSCAssert([[mock lowercaseString] isEqualToString:@"native"], @"OCMock arm64 dispatch failed");
-        puts("Native dependency smoke test passed: detector UTF-8/reset, legacy shortcut ABI/classes, reporter, Growl, Sparkle, OCMock dispatch.");
+        puts("Native dependency smoke test passed: detector UTF-8/reset, legacy shortcut ABI/classes, reporter, Growl, OCMock dispatch.");
     }
     return 0;
 }

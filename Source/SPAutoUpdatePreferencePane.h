@@ -39,4 +39,6 @@
  */
 @interface SPAutoUpdatePreferencePane : SPPreferencePane <SPPreferencePaneProtocol> 
 
+- (IBAction)checkForUpdates:(id)sender;
+
 @end

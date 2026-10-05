@@ -76,6 +76,7 @@
 - (void)doPerformQueryService:(NSPasteboard *)pboard userData:(NSString *)data error:(NSString **)error;
 
 // Menu methods
+- (IBAction)checkForUpdates:(id)sender;
 - (IBAction)donate:(id)sender;
 - (IBAction)visitWebsite:(id)sender;
 - (IBAction)visitHelpWebsite:(id)sender;

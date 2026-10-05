@@ -161,9 +161,7 @@
 		4D90B79E101E0CF200D116A1 /* SPUserManager.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 4D90B79B101E0CF200D116A1 /* SPUserManager.xcdatamodel */; };
 		4D90B79F101E0CF200D116A1 /* SPUserMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D90B79D101E0CF200D116A1 /* SPUserMO.m */; };
 		4D90B7A2101E0D1500D116A1 /* UserManagerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D90B7A0101E0D1500D116A1 /* UserManagerView.xib */; };
-		4DECC3350EC2A170008D359E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DECC3320EC2A170008D359E /* Sparkle.framework */; };
 		4DECC3370EC2A170008D359E /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DECC3340EC2A170008D359E /* Growl.framework */; };
-		4DECC48F0EC2B436008D359E /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4DECC3320EC2A170008D359E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4DECC4910EC2B436008D359E /* Growl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4DECC3340EC2A170008D359E /* Growl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		50082B3D1BF7CD2100746ECC /* ICUTemplateMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DC8AC0F909194002A3258 /* ICUTemplateMatcher.m */; };
 		50082B3E1BF7CD2100746ECC /* NSArray_DeepMutableCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DC8AE0F909194002A3258 /* NSArray_DeepMutableCopy.m */; };
@@ -313,7 +311,6 @@
 		586F457B0FDB269E00B428D7 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DC8AB0F909194002A3258 /* RegexKitLite.m */; };
 		586F457E0FDB280100B428D7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 296DC8BE0F9091DF002A3258 /* libicucore.dylib */; };
 		5870868410FA3E9C00D58E1C /* SPDataStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5870868310FA3E9C00D58E1C /* SPDataStorage.m */; };
-		5885940F0F7AEE6000ED0E67 /* sparkle-public-key.pem in Resources */ = {isa = PBXBuildFile; fileRef = 5885940E0F7AEE6000ED0E67 /* sparkle-public-key.pem */; };
 		5885CF4A116A63B200A85ACB /* SPFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 5885CF49116A63B200A85ACB /* SPFileHandle.m */; };
 		588B2CC80FE5641E00EC5FC0 /* ssh-connected.png in Resources */ = {isa = PBXBuildFile; fileRef = 588B2CC50FE5641E00EC5FC0 /* ssh-connected.png */; };
 		588B2CC90FE5641E00EC5FC0 /* ssh-connecting.png in Resources */ = {isa = PBXBuildFile; fileRef = 588B2CC60FE5641E00EC5FC0 /* ssh-connecting.png */; };
@@ -618,7 +615,6 @@
 			files = (
 				58B907FB11BDA5A9000826E5 /* PSMTabBar.framework in Copy Frameworks */,
 				4DECC4910EC2B436008D359E /* Growl.framework in Copy Frameworks */,
-				4DECC48F0EC2B436008D359E /* Sparkle.framework in Copy Frameworks */,
 				586EBD5D11418D9400B3DE45 /* FeedbackReporter.framework in Copy Frameworks */,
 				58C6C71F11FBB18000A3F5E9 /* UniversalDetector.framework in Copy Frameworks */,
 				58DC0D7C12932AB200B76DA5 /* ShortcutRecorder.framework in Copy Frameworks */,
@@ -889,7 +885,6 @@
 		4D90B79C101E0CF200D116A1 /* SPUserMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPUserMO.h; sourceTree = "<group>"; };
 		4D90B79D101E0CF200D116A1 /* SPUserMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPUserMO.m; sourceTree = "<group>"; };
 		4D90B7A1101E0D1500D116A1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UserManagerView.xib; sourceTree = "<group>"; };
-		4DECC3320EC2A170008D359E /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		4DECC3340EC2A170008D359E /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		500C1F901BFB5F9F0095DC7F /* SPPrivilegesMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPPrivilegesMO.h; sourceTree = "<group>"; };
 		500C1F911BFB5F9F0095DC7F /* SPPrivilegesMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPPrivilegesMO.m; sourceTree = "<group>"; };
@@ -1032,7 +1027,6 @@
 		5870868210FA3E9C00D58E1C /* SPDataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPDataStorage.h; sourceTree = "<group>"; };
 		5870868310FA3E9C00D58E1C /* SPDataStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDataStorage.m; sourceTree = "<group>"; };
 		588593F30F7AEC9500ED0E67 /* package-application.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "package-application.sh"; sourceTree = "<group>"; };
-		5885940E0F7AEE6000ED0E67 /* sparkle-public-key.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "sparkle-public-key.pem"; sourceTree = "<group>"; };
 		5885CF48116A63B200A85ACB /* SPFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPFileHandle.h; sourceTree = "<group>"; };
 		5885CF49116A63B200A85ACB /* SPFileHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPFileHandle.m; sourceTree = "<group>"; };
 		588B2CC50FE5641E00EC5FC0 /* ssh-connected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ssh-connected.png"; sourceTree = "<group>"; };
@@ -1340,7 +1334,6 @@
 				296DC8BF0F9091DF002A3258 /* libicucore.dylib in Frameworks */,
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				4DECC3370EC2A170008D359E /* Growl.framework in Frameworks */,
-				4DECC3350EC2A170008D359E /* Sparkle.framework in Frameworks */,
 				584D877815140F7B00F24774 /* SPMySQL.framework in Frameworks */,
 				586AAB1514FAD3AF007F82BF /* QueryKit.framework in Frameworks */,
 				296DC89F0F8FD336002A3258 /* WebKit.framework in Frameworks */,
@@ -1366,7 +1359,6 @@
 				58B9077D11BD9B64000826E5 /* Carbon.framework */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 				4DECC3340EC2A170008D359E /* Growl.framework */,
-				4DECC3320EC2A170008D359E /* Sparkle.framework */,
 				296DC89E0F8FD336002A3258 /* WebKit.framework */,
 				586EBD2311418D7C00B3DE45 /* FeedbackReporter.framework */,
 				58C6C71511FBB17200A3F5E9 /* UniversalDetector.framework */,
@@ -1925,7 +1917,6 @@
 				17F90E2B1210B34900274C98 /* Credits.rtf */,
 				17CC993A10B4C9C80034CD7A /* License.rtf */,
 				17E641F50EF02088001BC333 /* Growl Registration Ticket.growlRegDict */,
-				5885940E0F7AEE6000ED0E67 /* sparkle-public-key.pem */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2881,7 +2872,6 @@
 				17B548711E82B02100175D5A /* button_bar_handle@2x.png in Resources */,
 				B5E2C5FA0F2353B5007446E0 /* table-property.png in Resources */,
 				58186D210F4CB38900851FE9 /* ConnectionErrorDialog.xib in Resources */,
-				5885940F0F7AEE6000ED0E67 /* sparkle-public-key.pem in Resources */,
 				B5E92F190F75B2D100012500 /* ExportDialog.xib in Resources */,
 				B57747D20F7A891A003B34F9 /* Preferences.xib in Resources */,
 				B57748420F7A8B57003B34F9 /* database.png in Resources */,

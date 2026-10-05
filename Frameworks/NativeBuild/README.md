@@ -1,9 +1,14 @@
 # Native Apple Silicon dependencies
 
 The application uses the checked-in frameworks directly; an ordinary app build does
-not download dependencies. The framework binaries below support `arm64` and macOS
-12 or later. Sparkle is the unmodified official universal `arm64`/`x86_64` release.
-The remaining frameworks were rebuilt for `arm64` with Xcode 27 / macOS 27 SDK.
+not download dependencies. The active application and test frameworks below were
+rebuilt for `arm64`, macOS 12 or later, with Xcode 27 / macOS 27 SDK.
+
+Sparkle is retained in the repository and rebuild workflow as a historical archive.
+It is no longer linked, embedded, or initialized by this fork. Update actions open
+the [fork release page](https://github.com/codezi/sequelpro/releases) in the browser.
+The archived Sparkle binary is the unmodified official universal `arm64`/`x86_64`
+release.
 
 | Framework | Upstream source / revision | License |
 | --- | --- | --- |
@@ -12,7 +17,7 @@ The remaining frameworks were rebuilt for `arm64` with Xcode 27 / macOS 27 SDK.
 | ShortcutRecorder | [Kentzo/ShortcutRecorder](https://github.com/Kentzo/ShortcutRecorder/tree/7f29c1820861541c4b59890110e8147526f9ac92) `7f29c1820861541c4b59890110e8147526f9ac92` | BSD |
 | UniversalDetector | [MacPaw/universal-detector](https://github.com/MacPaw/universal-detector/tree/4eb832d999628edcd3d134e46bd35357c8c99a85) `4eb832d999628edcd3d134e46bd35357c8c99a85` | LGPL 2.1 or later |
 | OCMock (tests) | [erikdoe/ocmock](https://github.com/erikdoe/ocmock/tree/2c0bfd373289f4a7716db5d6db471640f91a6507) `2c0bfd373289f4a7716db5d6db471640f91a6507` (3.9.4) | Apache 2.0 |
-| Sparkle | [Sparkle 1.27.3 release](https://github.com/sparkle-project/Sparkle/releases/tag/1.27.3) | MIT and bundled third-party notices |
+| Sparkle (historical archive) | [Sparkle 1.27.3 release](https://github.com/sparkle-project/Sparkle/releases/tag/1.27.3) | MIT and bundled third-party notices |
 
 Growl's two source dependencies are also pinned:
 
@@ -33,7 +38,9 @@ Frameworks/NativeBuild/rebuild.sh
 ```
 
 The script fetches each exact revision, applies the checked-in patches, builds the
-frameworks, validates the Sparkle archive SHA-256, and replaces the six bundles.
+five active application/test frameworks, validates the historical Sparkle archive
+SHA-256, and replaces all six repository bundles. Retaining Sparkle in this rebuild
+workflow does not add it to the application.
 It fails if an existing cache points at a different revision. Build logs and source
 checkouts remain in `.work/native-frameworks/` by default. For a separate output
 without changing checked-in bundles:
@@ -45,8 +52,9 @@ Frameworks/NativeBuild/rebuild.sh
 ```
 
 Rebuilt public headers have trailing whitespace removed, and rebuilt bundles are
-ad-hoc signed. Sparkle's official files and signature are preserved. Xcode signs
-embedded copies when building the app. The bundled Sparkle archive has SHA-256
+ad-hoc signed. The archived Sparkle files and signature are preserved. Xcode signs
+the active embedded frameworks when building the app. The historical Sparkle
+archive has SHA-256
 `b4c70198aba86a65dc04550fbd0a97243a9ba3b98d73d138c877347f27920952`.
 
 ## Compatibility changes
@@ -62,9 +70,8 @@ embedded copies when building the app. The bundled Sparkle archive has SHA-256
   hashing continues to use the system CommonCrypto implementation.
 - OCMock's upstream test-only OCHamcrest package reference is omitted for the
   framework build; OCMock's implementation and app test APIs are unchanged.
-- Sparkle 1.27.3 retains the application's `SUUpdater` API and includes a native
-  relauncher. Update-server content and published Sequel Pro releases are outside
-  this local architecture port.
+- The archived Sparkle 1.27.3 bundle includes its original `SUUpdater` API and
+  native relauncher for historical reference. Neither is used by this fork.
 
 ## Native smoke check
 
@@ -74,7 +81,7 @@ Frameworks/NativeBuild/smoke-test.sh
 
 This compiles and runs an arm64 process against the actual checked-in binaries. It
 checks UTF-8 and ASCII detection/reset, the legacy shortcut key-combination ABI and
-classes, FeedbackReporter initialization, Growl/Sparkle class loading, and OCMock
+classes, FeedbackReporter initialization, Growl class loading, and OCMock
 method interception. It does not submit reports, send notifications, or check for
 updates. Passing an alternate framework directory tests separate rebuild output.
 

@@ -29,6 +29,7 @@
 //  More info at <https://github.com/sequelpro/sequelpro>
 
 #import "SPAutoUpdatePreferencePane.h"
+#import "SPAppController.h"
 
 @implementation SPAutoUpdatePreferencePane
 
@@ -47,7 +48,7 @@
 
 - (NSString *)preferencePaneName
 {
-	return NSLocalizedString(@"Auto Update", @"auto update preference pane name");
+	return NSLocalizedString(@"Updates", @"fork update preference pane name");
 }
 
 - (NSString *)preferencePaneIdentifier
@@ -57,12 +58,17 @@
 
 - (NSString *)preferencePaneToolTip
 {
-	return NSLocalizedString(@"Auto Update Preferences", @"auto update preference pane tooltip");
+	return NSLocalizedString(@"Updates for this fork", @"fork update preference pane tooltip");
 }
 
 - (BOOL)preferencePaneAllowsResizing
 {
 	return NO;
+}
+
+- (IBAction)checkForUpdates:(id)sender
+{
+	[(SPAppController *)[NSApp delegate] checkForUpdates:sender];
 }
 
 @end
