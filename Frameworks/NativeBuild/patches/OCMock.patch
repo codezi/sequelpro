@@ -1,0 +1,12 @@
+diff --git a/Source/OCMock.xcodeproj/project.pbxproj b/Source/OCMock.xcodeproj/project.pbxproj
+index 983aa41..bab1e9e 100644
+--- a/Source/OCMock.xcodeproj/project.pbxproj
++++ b/Source/OCMock.xcodeproj/project.pbxproj
+@@ -1313,7 +1313,6 @@
+ 			);
+ 			mainGroup = 030EF09C14632FD000B04273;
+ 			packageReferences = (
+-				03BB460A27274F5500455183 /* XCRemoteSwiftPackageReference "OCHamcrest" */,
+ 			);
+ 			productRefGroup = 030EF0A914632FD000B04273 /* Products */;
+ 			projectDirPath = "";

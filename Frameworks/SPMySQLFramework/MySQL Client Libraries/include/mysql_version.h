@@ -20,7 +20,7 @@
 #define MYSQL_PORT_DEFAULT		0
 #define MYSQL_UNIX_ADDR			"/tmp/mysql.sock"
 #define MYSQL_CONFIG_NAME		"my"
-#define MYSQL_COMPILATION_COMMENT	"MySQL Community Server (GPL)"
+#define MYSQL_COMPILATION_COMMENT	"Source distribution"
 
 /* mysqld compile time options */
 #endif /* _CUSTOMCONFIG_ */

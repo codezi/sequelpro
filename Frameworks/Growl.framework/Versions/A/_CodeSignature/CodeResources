@@ -6,8 +6,67 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		VZb3f8My4te/5JwcjfvotgCXTAs=
+		z/Wli9LxT5QCFe9etDu/SwA+8zU=
 		</data>
+	</dict>
+	<key>files2</key>
+	<dict>
+		<key>Headers/Growl.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jqe3SUtaoUqHpF2NFvrab8xw8xUjwTCtmVc+nDCE8HM=
+			</data>
+		</dict>
+		<key>Headers/GrowlApplicationBridge.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4XgCbERBYDosGN01doTVeIKS6IqdhYEsuaLPl9VFGaA=
+			</data>
+		</dict>
+		<key>Headers/GrowlCodeSignUtilities.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nHhDXX1E4icD6bI0lHnQbskzZR4rXxVJWQ/FuIhfiwk=
+			</data>
+		</dict>
+		<key>Headers/GrowlDefines.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			oVLMjKwKnfFCXEgd1s3xhz5EHWRUIc/13+3kWwU9eCw=
+			</data>
+		</dict>
+		<key>Headers/GrowlNote.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QIRKW+DAMZt3mY7fNtu4oMJ0NTAUvQTL6rJpo6MHdL0=
+			</data>
+		</dict>
+		<key>PrivateHeaders/GrowlApplicationBridge_Private.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			UjA0dWIBQQ+jHOv4uqsMvHQ+akDWSUgy2b3rbFNHzAY=
+			</data>
+		</dict>
+		<key>PrivateHeaders/GrowlNote_Private.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			poN+aE9fCj5ZTIROh7l8BK3p7Oa23JVWDkgTRKK75Ms=
+			</data>
+		</dict>
+		<key>Resources/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GcZJCWwFdxkThUGKMs1NiXIWf7J6MU32Z0Xgooo7lG4=
+			</data>
+		</dict>
 	</dict>
 	<key>rules</key>
 	<dict>
@@ -27,8 +86,92 @@
 			<key>weight</key>
 			<real>1100</real>
 		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
 		<key>^version.plist$</key>
 		<true/>
+	</dict>
+	<key>rules2</key>
+	<dict>
+		<key>.*\.dSYM($|/)</key>
+		<dict>
+			<key>weight</key>
+			<real>11</real>
+		</dict>
+		<key>^(.*/)?\.DS_Store$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>2000</real>
+		</dict>
+		<key>^(Frameworks|SharedFrameworks|PlugIns|Plug-ins|XPCServices|Helpers|MacOS|Library/(Automator|Spotlight|LoginItems))/</key>
+		<dict>
+			<key>nested</key>
+			<true/>
+			<key>weight</key>
+			<real>10</real>
+		</dict>
+		<key>^.*</key>
+		<true/>
+		<key>^Info\.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^PkgInfo$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^Resources/</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^Resources/.*\.lproj/</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>1000</real>
+		</dict>
+		<key>^Resources/.*\.lproj/locversion.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
+		<key>^[^/]+$</key>
+		<dict>
+			<key>nested</key>
+			<true/>
+			<key>weight</key>
+			<real>10</real>
+		</dict>
+		<key>^embedded\.provisionprofile$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^version\.plist$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
 	</dict>
 </dict>
 </plist>

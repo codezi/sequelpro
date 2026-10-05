@@ -20,8 +20,12 @@
 #import <AppKit/AppKit.h>
 #import <Growl/GrowlDefines.h>
 
+#import "GrowlNote.h"
+
 //Forward declarations
 @protocol GrowlApplicationBridgeDelegate;
+
+@class GrowlMiniDispatch, GrowlNote, GrowlCommunicationAttempt;
 
 //------------------------------------------------------------------------------
 #pragma mark -
@@ -34,9 +38,45 @@
  *	 Currently it provides a way to detect if Growl is installed and launch the
  *	 GrowlHelperApp if it's not already running.
  */
-@interface GrowlApplicationBridge : NSObject {
+@interface GrowlApplicationBridge : NSObject <GrowlNoteDelegate> {
+   BOOL _isGrowlRunning;
+   BOOL _useNotificationCenterAlways;
+   BOOL _shouldUseBuiltInNotifications;
+   BOOL _registerWhenGrowlIsReady;
+   BOOL _hasGrowlThreeFrameworkSupport;
 
+   BOOL _sandboxed;
+   BOOL _hasGNTP;
+   BOOL _hasNetworkClient;
+   BOOL _registered;
+
+   NSDictionary *_registrationDictionary;
+   NSString *_appName;
+   NSData *_appIconData;
+
+   id<GrowlApplicationBridgeDelegate> _delegate;
+
+   @private
+   GrowlCommunicationAttempt *_registrationAttempt;
 }
+
+@property (nonatomic, readonly) BOOL isGrowlRunning;
+@property (nonatomic, readonly) BOOL useNotificationCenterAlways;
+
+@property (nonatomic, readonly) BOOL sandboxed;
+@property (nonatomic, readonly) BOOL hasGNTP;
+@property (nonatomic, readonly) BOOL hasNetworkClient;
+@property (nonatomic, readonly) BOOL registered;
+@property (nonatomic, assign) BOOL registerWhenGrowlIsReady;
+
+@property (nonatomic, assign) BOOL shouldUseBuiltInNotifications;
+@property (nonatomic, copy) NSDictionary *registrationDictionary;
+@property (nonatomic, copy) NSString *appName;
+@property (nonatomic, copy) NSData *appIconData;
+
+@property (nonatomic, assign) id<GrowlApplicationBridgeDelegate> delegate;
+
++(GrowlApplicationBridge*)sharedBridge;
 
 /*!
  *	@method isGrowlInstalled
@@ -149,12 +189,12 @@
  *	@param clickContext	A context passed back to the Growl delegate if it implements -(void)growlNotificationWasClicked: and the notification is clicked. Not all display plugins support clicking. The clickContext must be plist-encodable (completely of <code>NSString</code>, <code>NSArray</code>, <code>NSNumber</code>, <code>NSDictionary</code>, and <code>NSData</code> types).
  */
 + (void) notifyWithTitle:(NSString *)title
-			 description:(NSString *)description
-		notificationName:(NSString *)notifName
-				iconData:(NSData *)iconData
-				priority:(signed int)priority
-				isSticky:(BOOL)isSticky
-			clickContext:(id)clickContext;
+             description:(NSString *)description
+        notificationName:(NSString *)notifName
+                iconData:(NSData *)iconData
+                priority:(signed int)priority
+                isSticky:(BOOL)isSticky
+            clickContext:(id)clickContext;
 
 /*!
  *	@method notifyWithTitle:description:notificationName:iconData:priority:isSticky:clickContext:identifier:
@@ -182,29 +222,32 @@
  *	@param identifier	An identifier for this notification. Notifications with equal identifiers are coalesced.
  */
 + (void) notifyWithTitle:(NSString *)title
-			 description:(NSString *)description
-		notificationName:(NSString *)notifName
-				iconData:(NSData *)iconData
-				priority:(signed int)priority
-				isSticky:(BOOL)isSticky
-			clickContext:(id)clickContext
-			  identifier:(NSString *)identifier;
+             description:(NSString *)description
+        notificationName:(NSString *)notifName
+                iconData:(NSData *)iconData
+                priority:(signed int)priority
+                isSticky:(BOOL)isSticky
+            clickContext:(id)clickContext
+              identifier:(NSString *)identifier;
 
 /*!	@method	notifyWithDictionary:
- *	@abstract	Notifies using a userInfo dictionary suitable for passing to
- *	 <code>NSDistributedNotificationCenter</code>.
+ *	@abstract	Notifies using a userInfo dictionary suitable for passing to Growl
  *	@param	userInfo	The dictionary to notify with.
- *	@discussion	Before Growl 0.6, your application would have posted
- *	 notifications using <code>NSDistributedNotificationCenter</code> by
- *	 creating a userInfo dictionary with the notification data. This had the
- *	 advantage of allowing you to add other data to the dictionary for programs
- *	 besides Growl that might be listening.
- *
- *	 This method allows you to use such dictionaries without being restricted
- *	 to using <code>NSDistributedNotificationCenter</code>. The keys for this dictionary
- *	 can be found in GrowlDefines.h.
+ *	@discussion	The keys for this dictionary can be found in GrowlDefines.h
  */
 + (void) notifyWithDictionary:(NSDictionary *)userInfo;
+
+/*!
+ * @brief notify with a GrowlNote
+ * @method notifyWithNote:
+ * @param note The GrowlNote to notify with
+ * @discussion the new preffered method for sending a notification, all major new API will be added through GrowlNote
+ *
+ * @since 3.0
+ */
+- (void) notifyWithNote:(GrowlNote*)note;
+
+- (void) cancelNoteWithUUID:(NSString*)uuid;
 
 #pragma mark -
 
@@ -240,6 +283,8 @@
  *	 This method is now implemented using <code>-registerWithDictionary:</code>.
  */
 + (void) reregisterGrowlNotifications;
+
+- (BOOL)isNotificationDefaultEnabled:(NSDictionary*)growlDict;
 
 #pragma mark -
 
@@ -390,8 +435,8 @@
 /*!	@brief	Tries to fill in missing keys in a notification dictionary.
  *	@param	notifDict	The dictionary to fill in.
  *	@return	The dictionary with the keys filled in. This will be a separate instance from \a notifDict.
- *	@discussion	This function examines the \a notifDict for missing keys, and 
- *	 tries to get them from the last known registration dictionary. As of 1.1, 
+ *	@discussion	This function examines the \a notifDict for missing keys, and
+ *	 tries to get them from the last known registration dictionary. As of 1.1,
  *	 the keys that it will look for are:
  *
  *	 \li <code>GROWL_APP_NAME</code>
@@ -410,8 +455,8 @@
  *@abstract Lets the app know whether growl:// is registered on the system, used for certain methods below this
  *@return Returns whether growl:// is registered on the system
  *@discussion Methods such as openGrowlPreferences rely on the growl:// URL scheme to function
- * Further, this method can provide a check on whether Growl is installed, 
- * however, the framework will not be relying on this method for choosing when/how to notify, 
+ * Further, this method can provide a check on whether Growl is installed,
+ * however, the framework will not be relying on this method for choosing when/how to notify,
  * and it is not recommended that the app rely on it for other than whether to use growl:// methods
  *@since Growl.framework 1.4
  */
@@ -421,7 +466,7 @@
  * @method openGrowlPreferences:
  * @abstract Open Growl preferences, optionally to this app's settings, growl:// method
  * @param showApp Whether to show the application's settings, otherwise just opens to the last position
- * @return Return's whether opening the URL was succesfull or not.  
+ * @return Return's whether opening the URL was succesfull or not.
  * @discussion Will launch if Growl is installed, but not running, and open the preferences window
  * Uses growl:// URL scheme
  * @since Growl.framework 1.4
@@ -516,7 +561,7 @@
  *	@result The <code>NSData</code> to treat as the application icon.
  *	@deprecated In version 1.1, in favor of {{{-applicationIconForGrowl}}}.
  */
-- (NSData *) applicationIconDataForGrowl;
+- (NSData *) applicationIconDataForGrowl __attribute__((deprecated));
 
 /*!
  *	@method growlIsReady
@@ -540,6 +585,18 @@
 - (void) growlNotificationWasClicked:(id)clickContext;
 
 /*!
+ *	@method growlNotificationActionButtonClicked:
+ *	@abstract Informs the delegate that the action button of a Growl notification was clicked.
+ *	@discussion Informs the delegate that the action button of a Growl notification was clicked.  It
+ *	 is only sent for notifications sent with a non-<code>nil</code>
+ *	 clickContext and an action button, so if you want to receive a message when a notification is
+ *	 clicked, clickContext must not be <code>nil</code> when calling
+ *	 <code>+[GrowlApplicationBridge notifyWithTitle: description:notificationName:iconData:priority:isSticky:actionButton:cancelButton:clickContext:]</code>.
+ *	@param clickContext The clickContext passed when displaying the notification originally via +[GrowlApplicationBridge notifyWithTitle:description:notificationName:iconData:priority:isSticky:actionButtonTitle:cancelButtonTitle:clickContext:].
+ */
+- (void) growlNotificationActionButtonClicked:(id)clickContext;
+
+/*!
  *	@method growlNotificationTimedOut:
  *	@abstract Informs the delegate that a Growl notification timed out.
  *	@discussion Informs the delegate that a Growl notification timed out. It
@@ -557,8 +614,9 @@
  * @abstract Used only in sandboxed situations since we don't know whether the app has com.apple.security.network.client entitlement
  * @discussion GrowlDelegate calls to find out if we have the com.apple.security.network.client entitlement,
  *  since we can't find this out without hitting the sandbox.  We only call it if we detect that the application is sandboxed.
+ *	@deprecated In version 2.1, in favor of GrowlCodeSignUtilities' methods, will no longer be called.
  */
-- (BOOL) hasNetworkClientEntitlement;
+- (BOOL) hasNetworkClientEntitlement __attribute__((deprecated));
 
 @end
 

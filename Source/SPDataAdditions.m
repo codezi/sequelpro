@@ -197,6 +197,10 @@ uint32_t LimitUInt32(NSUInteger i);
 	NSUInteger totalLength = [self length];
 	NSUInteger encryptedLength = totalLength - kCCBlockSizeAES128; // >=0 ensured above
 
+	// CBC without PKCS padding requires complete AES blocks. Treat a truncated
+	// ciphertext as invalid data before CommonCrypto reports an alignment error.
+	if (encryptedLength % kCCBlockSizeAES128 != 0) return nil;
+
 	// Take the IV from the first 128-bit block
 	unsigned char iv[kCCBlockSizeAES128];
 	memcpy(iv, [self bytes], kCCBlockSizeAES128);
@@ -220,6 +224,7 @@ uint32_t LimitUInt32(NSUInteger i);
 	);
 	
 	if(res != kCCSuccess) {
+		free(decryptedBytes);
 		@throw [NSException exceptionWithName:SPCommonCryptoExceptionName
 									   reason:[NSString stringWithFormat:@"CCCrypt() failed! (CCCryptorStatus=%d)",res]
 									 userInfo:@{@"cryptorStatus":@(res)}];
@@ -239,6 +244,7 @@ uint32_t LimitUInt32(NSUInteger i);
 	uint32_t dataLength = NSSwapBigIntToHost(bigIntDataLength);
 	
 	if(dataLength >= (encryptedLength-sizeof(UInt32))) { //this way dataLength can still reach into padding, but we own that memory anyway.
+		free(decryptedBytes);
 		@throw [NSException exceptionWithName:NSInternalInconsistencyException
 									   reason:[NSString stringWithFormat:@"dataLength=%u exceeds encryptedLength=%lu! Either the message is incomplete, decrypting resulted in invalid data, or this is a malicious message!",dataLength,encryptedLength]
 									 userInfo:nil];

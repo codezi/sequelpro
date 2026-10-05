@@ -1210,7 +1210,7 @@
 	// Skip tracking rects for placeholders - not required.
 	if ([cell isPlaceholder]) return;
 
-    NSInteger tag;
+    NSTrackingRectTag tag;
 	NSUInteger anIndex = [_cells indexOfObject:cell];
     NSRect cellTrackingRect = [_controller cellTrackingRectAtIndex:anIndex];
     NSPoint mousePoint = [self convertPoint:[[self window] mouseLocationOutsideOfEventStream] fromView:nil];
@@ -1219,18 +1219,26 @@
 	// If dragging, suppress mouse interaction
 	if ([[PSMTabDragAssistant sharedDragAssistant] isDragging]) mouseInCell = NO;
 
-    //set the cell tracking rect
-    [self removeTrackingRect:[cell cellTrackingTag]];
+    // Zero means no tracking rectangle has been installed yet. Modern AppKit
+    // rejects removing it, including during the first layout of a new tab.
+    if ([cell cellTrackingTag] != 0) {
+        [self removeTrackingRect:[cell cellTrackingTag]];
+        [cell setCellTrackingTag:0];
+    }
     tag = [self addTrackingRect:cellTrackingRect owner:cell userData:nil assumeInside:mouseInCell];
     [cell setCellTrackingTag:tag];
     [cell setHighlighted:mouseInCell];
     
+    if ([cell closeButtonTrackingTag] != 0) {
+        [self removeTrackingRect:[cell closeButtonTrackingTag]];
+        [cell setCloseButtonTrackingTag:0];
+    }
+    [cell setCloseButtonOver:NO];
     if ([cell hasCloseButton] && ![cell isCloseButtonSuppressed]) {
         NSRect closeRect = [_controller closeButtonTrackingRectAtIndex:anIndex];
         BOOL mouseInCloseRect = NSMouseInRect(mousePoint, closeRect, [self isFlipped]);
         
         //set the close button tracking rect
-        [self removeTrackingRect:[cell closeButtonTrackingTag]];
         tag = [self addTrackingRect:closeRect owner:cell userData:nil assumeInside:mouseInCloseRect];
         [cell setCloseButtonTrackingTag:tag];
         

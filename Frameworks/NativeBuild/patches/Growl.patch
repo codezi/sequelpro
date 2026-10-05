@@ -1,0 +1,101 @@
+diff --git a/Core/Source/GNTPKey.m b/Core/Source/GNTPKey.m
+index a1543b6..f2b8116 100644
+--- a/Core/Source/GNTPKey.m
++++ b/Core/Source/GNTPKey.m
+@@ -7,7 +7,6 @@
+ //
+ 
+ #import "GNTPKey.h"
+-#import <openssl/evp.h>
+ #import <Security/SecRandom.h>
+ #import <CommonCrypto/CommonCryptor.h>
+ #import <CommonCrypto/CommonDigest.h>
+@@ -356,7 +355,7 @@ - (NSData*)generateIV
+ 	NSData *ivData = nil;
+ 
+ 	const 
+-	EVP_CIPHER *cipher = nil;
++	void *cipher = NULL; // Encryption is disabled upstream; no OpenSSL dependency is needed.
+ 	NSInteger blockSize = 0;
+ 	switch ([self encryptionAlgorithm])
+ 	{
+diff --git a/Framework/Source/GrowlGNTPCommunicationAttempt.h b/Framework/Source/GrowlGNTPCommunicationAttempt.h
+index 17bd82d..48830bf 100644
+--- a/Framework/Source/GrowlGNTPCommunicationAttempt.h
++++ b/Framework/Source/GrowlGNTPCommunicationAttempt.h
+@@ -32,7 +32,7 @@
+ 
+ @property (nonatomic, retain) NSString *host;
+ @property (nonatomic, retain) NSString *password;
+-@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0) __attribute__((NSObject));
++@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0);
+ @property (nonatomic, retain) NSMutableDictionary *callbackHeaderItems;
+ @property (nonatomic, retain) GNTPKey *key;
+ @property (nonatomic, retain) NSData *addressData;
+diff --git a/Framework/Source/GrowlXPCCommunicationAttempt.h b/Framework/Source/GrowlXPCCommunicationAttempt.h
+index 18df9a9..d71c16b 100644
+--- a/Framework/Source/GrowlXPCCommunicationAttempt.h
++++ b/Framework/Source/GrowlXPCCommunicationAttempt.h
+@@ -20,7 +20,7 @@
+ 
+ @property (nonatomic, retain) NSDictionary *sendingDetails;
+ @property (nonatomic, retain) NSDictionary *responseDict;
+-@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0) __attribute__((NSObject));
++@property (nonatomic, retain) xpc_connection_t connection NS_AVAILABLE(10_7, 5_0);
+ 
+ + (BOOL)canCreateConnection;
+ + (void)shutdownXPC;
+diff --git a/Growl.xcodeproj/project.pbxproj b/Growl.xcodeproj/project.pbxproj
+index 5e24dcb..81c0e94 100644
+--- a/Growl.xcodeproj/project.pbxproj
++++ b/Growl.xcodeproj/project.pbxproj
+@@ -77,7 +77,7 @@
+ 		313B8FB913CEDC530075C9A3 /* GrowlGNTPCommunicationAttempt.h in Headers */ = {isa = PBXBuildFile; fileRef = 313B8FB713CEDC530075C9A3 /* GrowlGNTPCommunicationAttempt.h */; };
+ 		313B8FBB13CEDC530075C9A3 /* GrowlGNTPCommunicationAttempt.m in Sources */ = {isa = PBXBuildFile; fileRef = 313B8FB813CEDC530075C9A3 /* GrowlGNTPCommunicationAttempt.m */; };
+ 		313B8FBD13CEDC9C0075C9A3 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FB21A71391B524002E1F86 /* GCDAsyncSocket.h */; };
+-		313B8FC013CEDCAC0075C9A3 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; };
++		313B8FC013CEDCAC0075C9A3 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+ 		313B8FF513CEE2140075C9A3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E678F307511471002BF4E6 /* Security.framework */; };
+ 		313B8FF713CEE2750075C9A3 /* GrowlGNTPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 34A266380EBE75AF00C66E44 /* GrowlGNTPDefines.h */; };
+ 		313B8FF813CEE2750075C9A3 /* GrowlGNTPDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 938CAEED1080E64A00259421 /* GrowlGNTPDefines.m */; };
+@@ -177,7 +177,7 @@
+ 		93F2172D15E5C43E00343EB1 /* SliderHandle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F2172915E5C43E00343EB1 /* SliderHandle@2x.png */; };
+ 		93F2172E15E5C43E00343EB1 /* SliderHandleDown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F2172A15E5C43E00343EB1 /* SliderHandleDown@2x.png */; };
+ 		93F2172F15E5C43E00343EB1 /* SliderWell@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F2172B15E5C43E00343EB1 /* SliderWell@2x.png */; };
+-		93FB21AA1391B52C002E1F86 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; };
++		93FB21AA1391B52C002E1F86 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+ 		953F5CF107403B67008E2AEB /* GrowlNotifyScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 953F5CEB07403B67008E2AEB /* GrowlNotifyScriptCommand.m */; };
+ 		953F5D3807403BC7008E2AEB /* GrowlRegisterScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 953F5D2C07403BC7008E2AEB /* GrowlRegisterScriptCommand.m */; };
+ 		953F73A1081FFB9E00823EFE /* GrowlNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 953F739F081FFB9E00823EFE /* GrowlNotificationCenter.m */; };
+@@ -489,7 +489,7 @@
+ 		FF93C8FC142190A4007EAC43 /* GrowlGNTPCommunicationAttempt.m in Sources */ = {isa = PBXBuildFile; fileRef = 313B8FB813CEDC530075C9A3 /* GrowlGNTPCommunicationAttempt.m */; };
+ 		FF93C90A142190A4007EAC43 /* GNTPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 938CB10B1081250600259421 /* GNTPKey.m */; };
+ 		FF93C90B14219257007EAC43 /* GrowlGNTPDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 938CAEED1080E64A00259421 /* GrowlGNTPDefines.m */; };
+-		FF93C90C142192E5007EAC43 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; };
++		FF93C90C142192E5007EAC43 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+ 		FF93C90D142192E5007EAC43 /* GrowlOperatingSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 34F909340EC1FAAE00566EE6 /* GrowlOperatingSystemVersion.m */; };
+ 		FF93C91314219389007EAC43 /* ISO8601DateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 31DF220311E987AD0028E4B9 /* ISO8601DateFormatter.m */; };
+ 		FF93C915142193B8007EAC43 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF93C914142193B8007EAC43 /* CoreServices.framework */; };
+@@ -1449,8 +1449,8 @@
+ 		93F2172915E5C43E00343EB1 /* SliderHandle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SliderHandle@2x.png"; path = "external_dependencies/tmslidercontrol/SliderHandle@2x.png"; sourceTree = "<group>"; };
+ 		93F2172A15E5C43E00343EB1 /* SliderHandleDown@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SliderHandleDown@2x.png"; path = "external_dependencies/tmslidercontrol/SliderHandleDown@2x.png"; sourceTree = "<group>"; };
+ 		93F2172B15E5C43E00343EB1 /* SliderWell@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SliderWell@2x.png"; path = "external_dependencies/tmslidercontrol/SliderWell@2x.png"; sourceTree = "<group>"; };
+-		93FB21A71391B524002E1F86 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = external_dependencies/cocoaasyncsocket/GCD/GCDAsyncSocket.h; sourceTree = "<group>"; };
+-		93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = external_dependencies/cocoaasyncsocket/GCD/GCDAsyncSocket.m; sourceTree = "<group>"; };
++		93FB21A71391B524002E1F86 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = external_dependencies/cocoaasyncsocket/Source/GCD/GCDAsyncSocket.h; sourceTree = "<group>"; };
++		93FB21A81391B524002E1F86 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = external_dependencies/cocoaasyncsocket/Source/GCD/GCDAsyncSocket.m; sourceTree = "<group>"; };
+ 		950F7976080EED5C00CC5F62 /* GrowlWebKitDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrowlWebKitDefines.h; path = Plugins/Displays/WebKit/GrowlWebKitDefines.h; sourceTree = "<group>"; };
+ 		950F7977080EED5C00CC5F62 /* GrowlWebKitPrefsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = GrowlWebKitPrefsController.h; path = Plugins/Displays/WebKit/GrowlWebKitPrefsController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+ 		950F7978080EED5C00CC5F62 /* GrowlWebKitPrefsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GrowlWebKitPrefsController.m; path = Plugins/Displays/WebKit/GrowlWebKitPrefsController.m; sourceTree = "<group>"; };
+diff --git a/GrowlToolChainSupport.h b/GrowlToolChainSupport.h
+index d9ea0f8..58cd5ea 100644
+--- a/GrowlToolChainSupport.h
++++ b/GrowlToolChainSupport.h
+@@ -15,6 +15,6 @@
+ #pragma message(GROWL_ACCEPTED)
+ #pragma message(GROWL_FOUND)
+ 
+-#error Growl requires a specific toolchain in order to build. you're more than welcome to comment this out in order to attempt building with the toolchain you have. We don't accept patches against the released versions as they are frozen in time.
++// Native rebuild: Growl requires a specific toolchain in order to build. you're more than welcome to comment this out in order to attempt building with the toolchain you have. We don't accept patches against the released versions as they are frozen in time.
+     #endif
+ #endif

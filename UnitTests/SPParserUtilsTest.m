@@ -34,6 +34,7 @@
 #import <XCTest/XCTest.h>
 
 #include "SPParserUtils.h"
+#import "SPSQLParser.h"
 
 @interface SPParserUtilsTest : XCTestCase
 
@@ -42,6 +43,43 @@
 @end
 
 @implementation SPParserUtilsTest
+
+- (void)testSQLParserSplittingUsesNativeMethodSignatures
+{
+	SPSQLParser *parser = [[SPSQLParser alloc] initWithString:@"SELECT 'Tiếng Việt; 🚀', `a;b`;SELECT (1; 2), 3;SELECT 4 /* ; */"];
+	NSArray *statements = [parser splitStringByCharacter:';' skippingBrackets:YES ignoringQuotedStrings:YES];
+	NSArray *expected = @[@"SELECT 'Tiếng Việt; 🚀', `a;b`", @"SELECT (1; 2), 3", @"SELECT 4 /* ; */"];
+	XCTAssertEqualObjects(statements, expected);
+	[parser release];
+}
+
+- (void)testSQLParserRangesAndNotFound
+{
+	NSString *query = @"SELECT 'a;b';SELECT 2 /* ; */;SELECT 3";
+	SPSQLParser *parser = [[SPSQLParser alloc] initWithString:query];
+	NSMutableArray *statements = [NSMutableArray array];
+	for (NSValue *value in [parser splitStringIntoRangesByCharacter:';']) {
+		[statements addObject:[query substringWithRange:[value rangeValue]]];
+	}
+	NSArray *expected = @[@"SELECT 'a;b'", @"SELECT 2 /* ; */", @"SELECT 3"];
+	XCTAssertEqualObjects(statements, expected);
+	[parser setString:@"SELECT 1"];
+	XCTAssertEqual([parser firstOccurrenceOfCharacter:';' afterIndex:-1 skippingBrackets:YES ignoringQuotedStrings:YES], NSNotFound);
+	[parser release];
+}
+
+- (void)testSQLParserCustomDelimiter
+{
+	SPSQLParser *parser = [[SPSQLParser alloc] initWithString:@"DELIMITER $$\nCREATE PROCEDURE p() BEGIN SELECT 'a;b'; SELECT 2; END$$\nDELIMITER ;\nSELECT 3;"];
+	[parser setDelimiterSupport:YES];
+	NSArray *statements = [parser splitStringByCharacter:';' skippingBrackets:NO ignoringQuotedStrings:YES];
+	XCTAssertEqual([statements count], (NSUInteger)2);
+	if ([statements count] == 2) {
+		XCTAssertTrue([[statements objectAtIndex:0] containsString:@"SELECT 'a;b'; SELECT 2; END"]);
+		XCTAssertEqualObjects([[statements objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]], @"SELECT 3");
+	}
+	[parser release];
+}
 
 - (void)testUtf8strlen {
 	// NOTE!!: Those test do not verify that the utf8strlen() function works according to spec,

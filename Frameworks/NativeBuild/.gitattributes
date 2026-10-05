@@ -1,0 +1,3 @@
+# Patch context and upstream license notices retain their original whitespace.
+patches/*.patch -whitespace
+licenses/*.txt -whitespace

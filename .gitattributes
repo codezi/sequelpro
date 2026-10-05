@@ -1,1 +1,4 @@
 *.strings diff
+
+# Preserve signed upstream Sparkle files byte-for-byte.
+Frameworks/Sparkle.framework/** -whitespace

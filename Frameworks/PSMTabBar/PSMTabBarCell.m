@@ -464,8 +464,6 @@
         [aCoder encodeInteger:_currentStep forKey:@"currentStep"];
         [aCoder encodeBool:_isPlaceholder forKey:@"isPlaceholder"];
         [aCoder encodeInteger:_tabState forKey:@"tabState"];
-        [aCoder encodeInteger:_closeButtonTrackingTag forKey:@"closeButtonTrackingTag"];
-        [aCoder encodeInteger:_cellTrackingTag forKey:@"cellTrackingTag"];
         [aCoder encodeBool:_closeButtonOver forKey:@"closeButtonOver"];
         [aCoder encodeBool:_closeButtonPressed forKey:@"closeButtonPressed"];
         [aCoder encodeObject:_indicator forKey:@"indicator"];
@@ -488,8 +486,10 @@
             _currentStep = [aDecoder decodeIntegerForKey:@"currentStep"];
             _isPlaceholder = [aDecoder decodeBoolForKey:@"isPlaceholder"];
             _tabState = [aDecoder decodeIntegerForKey:@"tabState"];
-            _closeButtonTrackingTag = [aDecoder decodeIntegerForKey:@"closeButtonTrackingTag"];
-            _cellTrackingTag = [aDecoder decodeIntegerForKey:@"cellTrackingTag"];
+            // Tracking handles belong to a live view and cannot be restored
+            // from a nib or a different process. Layout creates fresh handles.
+            _closeButtonTrackingTag = 0;
+            _cellTrackingTag = 0;
             _closeButtonOver = [aDecoder decodeBoolForKey:@"closeButtonOver"];
             _closeButtonPressed = [aDecoder decodeBoolForKey:@"closeButtonPressed"];
             _indicator = [[aDecoder decodeObjectForKey:@"indicator"] retain];

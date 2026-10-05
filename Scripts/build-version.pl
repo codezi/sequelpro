@@ -68,34 +68,6 @@ sub _get_revision_short_hash
 	return `git log -n 1 --pretty=format:%h`;
 }
 
-#
-# Get the content of the app's Info.plist file.
-#
-sub _get_plist_content
-{
-	open(my $plist, shift) || croak "Unable to open plist file for reading: $!";
-
-	my $content = join('', <$plist>);
-
-	close($plist);
-
-	return $content;
-}
-
-#
-# Save the supplied plist content to the supplied path.
-#
-sub _save_plist
-{
-	my ($plist_content, $plist_path) = @_;
-
-	open(my $plist, '>', $plist_path) || croak "Unable to open plist file for writing: $!";
-
-	print $plist $plist_content;
-
-	close($plist);
-}
-
 printf("Updating Info.plist file at path $plist_path\n");
 
 my $version = _get_revision_number();
@@ -109,13 +81,16 @@ croak "$0: Unable to determine Git revision. Exiting..." unless $version;
 croak "$0: Unable to determine Git revision hash. Exiting..." unless $version_long_hash;
 croak "$0: Unable to determine Git revision short hash. Exiting..." unless $version_short_hash;
 
-my $info = _get_plist_content($plist_path);
-
-$info =~ s/([\t ]+<key>CFBundleVersion<\/key>\n[\t ]+<string>).*?(<\/string>)/$1$version$2/;
-$info =~ s/([\t ]+<key>SPVersionLongHash<\/key>\n[\t ]+<string>).*?(<\/string>)/$1$version_long_hash$2/;
-$info =~ s/([\t ]+<key>SPVersionShortHash<\/key>\n[\t ]+<string>).*?(<\/string>)/$1$version_short_hash$2/;
-
-_save_plist($info, $plist_path);
+# Xcode may remove an empty CFBundleVersion or serialize empty strings as
+# <string/>. Update plist keys structurally instead of matching XML text.
+for my $entry (
+    ["CFBundleVersion", "$version"],
+    ["SPVersionLongHash", $version_long_hash],
+    ["SPVersionShortHash", $version_short_hash]
+) {
+    system('/usr/bin/plutil', '-replace', $entry->[0], '-string', $entry->[1], $plist_path) == 0
+        or croak "Unable to update $entry->[0] in $plist_path";
+}
 
 printf("CFBundleVersion set to $version\n");
 printf("SPVersionLongHash set to $version_long_hash\n");

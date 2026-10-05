@@ -1,5 +1,5 @@
 /*
- * Copyright 2008, Jens Alfke, Torsten Curdt
+ * Copyright 2008-2017, Jens Alfke, Torsten Curdt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+// The framework uses ARC internally; clients may use manual reference counting.
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface FRExceptionReportingApplication : NSApplication
 
 @end
+
+NS_ASSUME_NONNULL_END

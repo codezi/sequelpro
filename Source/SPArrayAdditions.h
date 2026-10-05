@@ -42,7 +42,7 @@ static inline id NSArrayObjectAtIndex(NSArray *self, NSUInteger i)
  */
 static inline void NSMutableArrayInsertObject(NSMutableArray *self, id anObject, NSUInteger anIndex)
 {
-	typedef id (*NSMutableArrayInsertObjectPtr)(NSMutableArray*, SEL, id, NSUInteger);
+	typedef void (*NSMutableArrayInsertObjectPtr)(NSMutableArray*, SEL, id, NSUInteger);
 	static NSMutableArrayInsertObjectPtr cachedMethodPointer;
 	static SEL cachedSelector;
 
@@ -60,7 +60,7 @@ static inline void NSMutableArrayInsertObject(NSMutableArray *self, id anObject,
  */
 static inline void NSMutableArrayAddObject(NSMutableArray *self, id anObject)
 {
-	typedef id (*NSMutableArrayAddObjectPtr)(NSMutableArray*, SEL, id);
+	typedef void (*NSMutableArrayAddObjectPtr)(NSMutableArray*, SEL, id);
 	static NSMutableArrayAddObjectPtr cachedMethodPointer;
 	static SEL cachedSelector;
 

@@ -46,13 +46,6 @@ BUILD_PRODUCT="${BUILT_PRODUCTS_DIR}/${TARGET_NAME}${WRAPPER_SUFFIX}"
 FRAMEWORKS_PATH="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 SHARED_SUPPORT_DIR="${BUILD_PRODUCT}/Contents/SharedSupport"
 
-dev_sign_resource()
-{
-	log "Signing resource: $1"
-
-	codesign -f -s 'Sequel Pro Development' "$1" 2>&1
-}
-
 dist_sign_framework()
 {
 	codesign -f -s 'Developer ID Application: MJ Media (Y48LQG59RS)' -r "${SRCROOT}/Resources/spframeworkrequirement.bin" "$1" 2> /dev/null
@@ -66,14 +59,6 @@ dist_sign_resource()
 verify_signing()
 {
 	codesign --verify --deep "$1" 2>&1
-}
-
-dev_code_sign()
-{
-	while read FILE_TO_SIGN
-	do
-		dev_sign_resource "${FILE_TO_SIGN}"
-	done < "$1"
 }
 
 dist_code_sign()
@@ -152,12 +137,14 @@ log 'Updating build number (build-version.pl)...'
 copy_default_bundles
 copy_default_themes
 
-# Perform 'Release' or 'Distribution' build specific actions
-if [[ "$CONFIGURATION" == 'Release' || "$CONFIGURATION" == 'Distribution' ]]
+# Distribution re-signs resources after trimming. Local Release builds keep
+# embedded frameworks intact after Xcode's CodeSignOnCopy phase.
+if [ "$CONFIGURATION" = 'Distribution' ]
 then
-	log 'Updating localizations (localize.sh)...'
-
-	"${SRCROOT}/Scripts/localize.sh"
+	# Regenerating translations edits the source tree; opt in when maintaining them.
+	if [ "${SP_UPDATE_LOCALIZATIONS:-NO}" = YES ]; then
+		"${SRCROOT}/Scripts/localize.sh"
+	fi
 
 	log "Stripping application resources for distribution (trim-application.sh)..."
 
@@ -252,17 +239,8 @@ then
 	"${SRCROOT}/Scripts/package-application.sh" -p "$BUILD_PRODUCT"
 fi
 
-# Development build code signing
-if [ "$CONFIGURATION" == 'Debug' ]
-then
-	log 'Performing development build code signing...'
-
-	dev_code_sign "$FRAMEWORKS_LIST"
-	dev_code_sign "$FILES_TO_SIGN_LIST"
-
-	# Run a fake command to silence errors
-	touch "$BUILD_PRODUCT"
-fi
+# Xcode signs local builds and embedded frameworks using CODE_SIGN_IDENTITY.
+# Do not require the historical Sequel Pro Development keychain certificate.
 
 remove_temp_files
 

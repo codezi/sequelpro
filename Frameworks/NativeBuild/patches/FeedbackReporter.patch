@@ -1,0 +1,61 @@
+diff --git a/Sources/Main/FRExceptionReportingApplication.h b/Sources/Main/FRExceptionReportingApplication.h
+index a453def..ee75d34 100644
+--- a/Sources/Main/FRExceptionReportingApplication.h
++++ b/Sources/Main/FRExceptionReportingApplication.h
+@@ -16,10 +16,7 @@
+ 
+ #import <Cocoa/Cocoa.h>
+ 
+-// ARC is requried.
+-#if !__has_feature(objc_arc)
+-#error FeedbackReporter requires compiling with ARC
+-#endif
++// The framework uses ARC internally; clients may use manual reference counting.
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
+diff --git a/Sources/Main/FRFeedbackController.m b/Sources/Main/FRFeedbackController.m
+index d701ad9..d04369f 100644
+--- a/Sources/Main/FRFeedbackController.m
++++ b/Sources/Main/FRFeedbackController.m
+@@ -312,6 +312,9 @@ - (IBAction) send:(id)sender
+         url = [strongDelegate targetURLForFeedbackReport];
+         assert(url);
+     }
++    else if ([strongDelegate respondsToSelector:@selector(targetUrlForFeedbackReport)]) {
++        url = [NSURL URLWithString:[strongDelegate targetUrlForFeedbackReport]];
++    }
+     else {
+ 	    NSString *target = [[FRApplication feedbackURL] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+ 	    if (target == nil) {
+diff --git a/Sources/Main/FRFeedbackReporter.h b/Sources/Main/FRFeedbackReporter.h
+index 5dd916c..fc8553e 100644
+--- a/Sources/Main/FRFeedbackReporter.h
++++ b/Sources/Main/FRFeedbackReporter.h
+@@ -16,10 +16,7 @@
+ 
+ #import <Cocoa/Cocoa.h>
+ 
+-// ARC is requried.
+-#if !__has_feature(objc_arc)
+-#error FeedbackReporter requires compiling with ARC
+-#endif
++// The framework uses ARC internally; clients may use manual reference counting.
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
+@@ -33,11 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ // By default, reports include the entirety of the preferences.
+ // If you want to remove some items, for anonymity/privacy reasons, implement this delegate method.
+-- (NSDictionary*) anonymizePreferencesForFeedbackReport:(NSDictionary *)preferences;
++- (NSMutableDictionary*) anonymizePreferencesForFeedbackReport:(NSMutableDictionary *)preferences;
+ 
+ // By default, reports are sent to the URL in the Info.plist key PLIST_KEY_TARGETURL.
+ // If you want to send them elsewhere, implement this delegate method to return an http or https URL.
+ - (NSURL *) targetURLForFeedbackReport;
++// Compatibility with the original Sequel Pro framework.
++- (NSString *) targetUrlForFeedbackReport;
+ 
+ // By default, the report UI uses the Info.plist key CFBundleExecutable as the application's name.
+ // If you want to show something else, implement this delegate method.

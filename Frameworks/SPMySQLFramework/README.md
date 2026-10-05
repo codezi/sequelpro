@@ -35,9 +35,54 @@ To add as a subproject in Xcode:
 As a last resort jump onto IRC and join #sequel-pro on irc.freenode.net and any of the
 developers will be more than happy to help you out.
 
+## Native Apple Silicon builds
+
+The Xcode project targets `arm64` and macOS 12 or later. The bundled
+`MySQL Client Libraries/lib/libmysqlclient.a` contains both `arm64` and `x86_64`
+slices; its TLS implementation is statically included, so the framework does
+not require a Homebrew MySQL, OpenSSL, or MariaDB installation at runtime.
+
+The client remains MySQL **5.5.56**, matching the existing public headers and
+the `MYSQL` / `NET` structures used by this framework. This architecture port
+does not change its supported authentication methods or TLS protocols.
+
+To rebuild the library, install Xcode command-line tools and CMake **3.x**
+(the upstream CMake files predate the policy removals in CMake 4), then run:
+
+```sh
+./build-mysql-client.sh
+```
+
+The script downloads the [official MySQL 5.5.56 source](https://github.com/mysql/mysql-server/tree/mysql-5.5.56),
+verifies SHA-256 `deeece396b04bc931fb4c4d3188281b591ea097e47a400ef91242253b199b41b`,
+applies the checked-in patches, and builds each architecture separately using
+the selected Xcode SDK. It replaces the library only after all slices build.
+Build logs and intermediate files are kept in the temporary build directory.
+The source is GPLv2, as are its bundled yaSSL/TaoCrypt libraries; see the
+upstream `COPYING` files for their licenses.
+
+For an ARM-only rebuild that does not execute Intel build tools through
+Rosetta, use `./build-mysql-client.sh -a arm64`. Set `CMAKE=/path/to/cmake`
+to use a portable CMake 3 installation. `-s` accepts a pristine local 5.5.56
+source tree; `-b` selects an intermediate directory and `-o` selects an output
+directory containing `include/` and `lib/`.
+
+The patches recognize the LP64 ARM ABI, preserve the existing backported
+field types, and make the pure-C yaSSL runtime's virtual-call handler safe for
+the modern linker. Cached Objective-C method calls use explicit signatures,
+including `BOOL` return values, to match the Apple Silicon calling convention.
+
+After building the framework, the optional smoke test below checks string
+escaping, UTF-8 data, 64-bit values, SQL NULL, and background result streaming
+against an already-running disposable local server. It executes only SELECTs
+and uses the local `root` account with an empty password:
+
+```sh
+./test-native-client.sh /path/to/SPMySQL.framework /path/to/test-mysql.sock
+```
+
 ## License
 
 Copyright (c) 2018 Rowan Beentje (rowan.beent.je) & the Sequel Pro team. All rights reserved.
 
 SPMySQLFramework is free and open source software, licensed under [MIT](https://opensource.org/licenses/MIT). See [LICENSE](https://github.com/sequelpro/sequelpro/blob/master/Frameworks/SPMySQLFramework/LICENSE) for full details.
-

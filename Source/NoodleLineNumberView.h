@@ -26,6 +26,10 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 
+typedef NSUInteger (*SPLineNumberForCharacterIndexIMP)(id, SEL, NSUInteger);
+typedef NSNumber *(*SPNumberWithUnsignedIntegerIMP)(id, SEL, NSUInteger);
+typedef void (*SPLineIndicesAddObjectIMP)(id, SEL, id);
+
 @interface NoodleLineNumberView : NSRulerView
 {
 
@@ -54,12 +58,12 @@
 	NSUInteger      dragSelectionStartLine;
 
 	SEL lineNumberForCharacterIndexSel;
-	IMP lineNumberForCharacterIndexIMP;
+	SPLineNumberForCharacterIndexIMP lineNumberForCharacterIndexIMP;
 	SEL lineRangeForRangeSel;
 	SEL numberWithUnsignedIntegerSel;
-	IMP numberWithUnsignedIntegerIMP;
+	SPNumberWithUnsignedIntegerIMP numberWithUnsignedIntegerIMP;
 	SEL addObjectSel;
-	IMP addObjectIMP;
+	SPLineIndicesAddObjectIMP addObjectIMP;
 	SEL rangeOfLineSel;
 	Class numberClass;
 

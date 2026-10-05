@@ -48,12 +48,13 @@
 static inline const char* _cStringForStringWithEncoding(NSString* aString, NSStringEncoding anEncoding, NSUInteger *cStringLengthPointer) 
 {
 	static Class cachedClass;
-	static IMP cachedMethodPointer;
+	typedef const char *(*SPMySQLCStringConversionMethodPtr)(id, SEL, NSString *, NSStringEncoding, NSUInteger *);
+	static SPMySQLCStringConversionMethodPtr cachedMethodPointer;
 	static SEL cachedSelector;
 
 	if (!cachedClass) cachedClass = [SPMySQLConnection class];
 	if (!cachedSelector) cachedSelector = @selector(_cStringForString:usingEncoding:returningLengthAs:);
-	if (!cachedMethodPointer) cachedMethodPointer = [SPMySQLConnection methodForSelector:cachedSelector];
+	if (!cachedMethodPointer) cachedMethodPointer = (SPMySQLCStringConversionMethodPtr)[SPMySQLConnection methodForSelector:cachedSelector];
 
 	return (const char *)(*cachedMethodPointer)(cachedClass, cachedSelector, aString, anEncoding, cStringLengthPointer);
 }

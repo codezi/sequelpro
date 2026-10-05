@@ -24,7 +24,6 @@
 	[self setPostsFrameChangedNotifications:YES];
 	[self resetCursorRects];
 	
-	_myTrackingRectTag = -1;
 	_rolloverImage = nil;
 	_usualImage = nil;
 }
@@ -110,11 +109,11 @@
 
 - (void)removeTrackingRect
 {
-	if (_myTrackingRectTag != -1) {
+	if (_myTrackingRectTag != 0) {
 		[self removeTrackingRect:_myTrackingRectTag];
 	}
 
-	_myTrackingRectTag = -1;
+	_myTrackingRectTag = 0;
 }
 
 // override for rollover effect
@@ -163,7 +162,6 @@
     if ([coder allowsKeyedCoding]) {
         [coder encodeObject:_rolloverImage forKey:@"rolloverImage"];
         [coder encodeObject:_usualImage forKey:@"usualImage"];
-        [coder encodeInteger:_myTrackingRectTag forKey:@"myTrackingRectTag"];
     }
 }
 
@@ -173,7 +171,8 @@
         if ([decoder allowsKeyedCoding]) {
             _rolloverImage = [[decoder decodeObjectForKey:@"rolloverImage"] retain];
             _usualImage = [[decoder decodeObjectForKey:@"usualImage"] retain];
-            _myTrackingRectTag = [decoder decodeIntegerForKey:@"myTrackingRectTag"];
+            // Tracking tags are transient AppKit handles, not archive data.
+            _myTrackingRectTag = 0;
         }
     }
 

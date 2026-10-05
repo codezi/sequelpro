@@ -31,6 +31,13 @@
 #import "SPSQLParser.h"
 #import "RegexKitLite.h"
 
+// Cached implementations must use their complete method signature. In particular,
+// arm64 passes variadic arguments differently from fixed Objective-C arguments.
+typedef NSUInteger (*SPParserCharacterOccurrenceIMP)(id, SEL, unichar, NSInteger, BOOL, BOOL);
+typedef NSString *(*SPParserSubstringIMP)(id, SEL, NSRange);
+typedef unichar (*SPParserCharacterAtIndexIMP)(id, SEL, NSInteger);
+typedef NSUInteger (*SPParserQuotedStringEndIMP)(id, SEL, unichar, NSInteger);
+
 @interface SPSQLParser ()
 
 - (unichar) _charAtIndex:(NSInteger)index;
@@ -577,8 +584,8 @@
 	NSUInteger nextIndex = 0;
 	NSInteger queryLength;
 
-	IMP firstOccOfChar = [self methodForSelector:@selector(firstOccurrenceOfCharacter:afterIndex:skippingBrackets:ignoringQuotedStrings:)];
-	IMP subString = [string methodForSelector:@selector(substringWithRange:)];
+	SPParserCharacterOccurrenceIMP firstOccOfChar = (SPParserCharacterOccurrenceIMP)[self methodForSelector:@selector(firstOccurrenceOfCharacter:afterIndex:skippingBrackets:ignoringQuotedStrings:)];
+	SPParserSubstringIMP subString = (SPParserSubstringIMP)[string methodForSelector:@selector(substringWithRange:)];
 
 	// Walk through the string finding the character to split by, and add all strings to the array.
 	while (1) {
@@ -621,7 +628,7 @@
 	NSUInteger nextIndex = 0;
 	NSInteger queryLength;
 
-	IMP firstOccOfChar = [self methodForSelector:@selector(firstOccurrenceOfCharacter:afterIndex:skippingBrackets:ignoringQuotedStrings:)];
+	SPParserCharacterOccurrenceIMP firstOccOfChar = (SPParserCharacterOccurrenceIMP)[self methodForSelector:@selector(firstOccurrenceOfCharacter:afterIndex:skippingBrackets:ignoringQuotedStrings:)];
 
 	// Walk through the string finding the character to split by, and add all ranges to the array.
 	while (1) {
@@ -695,10 +702,10 @@
 	lastMatchIsDelimiter = NO;
 
 	// Cache frequently used selectors, avoiding dynamic binding overhead
-	IMP charAtIndex = [self methodForSelector:@selector(_charAtIndex:)];
+	SPParserCharacterAtIndexIMP charAtIndex = (SPParserCharacterAtIndexIMP)[self methodForSelector:@selector(_charAtIndex:)];
 	SEL charAtIndexSEL = @selector(_charAtIndex:);
-	IMP endIndex = [self methodForSelector:@selector(endIndexOfStringQuotedByCharacter:startingAtIndex:)];
-	IMP substringWithRange = [self methodForSelector:@selector(substringWithRange:)];
+	SPParserQuotedStringEndIMP endIndex = (SPParserQuotedStringEndIMP)[self methodForSelector:@selector(endIndexOfStringQuotedByCharacter:startingAtIndex:)];
+	SPParserSubstringIMP substringWithRange = (SPParserSubstringIMP)[self methodForSelector:@selector(substringWithRange:)];
 
 	// Sanity check inputs
 	if (startIndex < -1) startIndex = -1;
@@ -842,7 +849,7 @@
 - (NSUInteger) endIndexOfStringQuotedByCharacter:(unichar)quoteCharacter startingAtIndex:(NSInteger)startIndex
 {
 	// Cache the charAtIndex selector, avoiding dynamic binding overhead
-	IMP charAtIndex = [self methodForSelector:@selector(_charAtIndex:)];
+	SPParserCharacterAtIndexIMP charAtIndex = (SPParserCharacterAtIndexIMP)[self methodForSelector:@selector(_charAtIndex:)];
 	SEL charAtIndexSEL = @selector(_charAtIndex:);
 
 	NSInteger stringLength = [string length];
@@ -906,7 +913,7 @@
 	unichar currentCharacter;
 
 	// Cache the charAtIndex selector, avoiding dynamic binding overhead
-	IMP charAtIndex = [self methodForSelector:@selector(_charAtIndex:)];
+	SPParserCharacterAtIndexIMP charAtIndex = (SPParserCharacterAtIndexIMP)[self methodForSelector:@selector(_charAtIndex:)];
 	SEL charAtIndexSEL = @selector(_charAtIndex:);
 
 	switch (commentType) {
